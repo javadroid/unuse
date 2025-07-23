@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Editor API Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .hidden {
+            display: none;
+        }
+        .loading {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #09f;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .image-container {
+            flex: 1;
+            min-width: 300px;
+        }
+        .image-container img {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .error {
+            color: #d9534f;
+            background-color: #f2dede;
+            border: 1px solid #ebccd1;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Editor API Demo</h1>
+    
+    <div class="form-group">
+        <label for="imageUrl">Image URL:</label>
+        <input type="text" id="imageUrl" placeholder="https://example.com/image.jpg" value="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8&w=1000&q=80">
+    </div>
+    
+    <div class="form-group">
+        <label for="prompt">Editing Prompt:</label>
+        <textarea id="prompt" placeholder="Describe how you want to edit the image...">Make the colors more vibrant</textarea>
+    </div>
+    
+    <button id="submitBtn" onclick="editImage()">Edit Image</button>
+    
+    <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+        <p>Processing your image... This may take a minute.</p>
+    </div>
+    
+    <div id="error" class="error hidden"></div>
+    
+    <div id="result" class="result hidden">
+        <h2>Result</h2>
+        <div class="images">
+            <div class="image-container">
+                <h3>Original Image</h3>
+                <img id="originalImage" src="" alt="Original Image">
+            </div>
+            <div class="image-container">
+                <h3>Edited Image</h3>
+                <img id="editedImage" src="" alt="Edited Image">
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        async function editImage() {
+            // Get values from form
+            const imageUrl = document.getElementById('imageUrl').value.trim();
+            const prompt = document.getElementById('prompt').value.trim();
+            
+            // Validate inputs
+            if (!imageUrl) {
+                showError('Please enter an image URL');
+                return;
+            }
+            
+            if (!prompt) {
+                showError('Please enter an editing prompt');
+                return;
+            }
+            
+            // Show loading indicator
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('error').classList.add('hidden');
+            document.getElementById('result').classList.add('hidden');
+            
+            try {
+                // Set original image
+                document.getElementById('originalImage').src = imageUrl;
+                
+                // Send request to API
+                const response = await fetch('/edit-image', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ imageUrl, prompt })
+                });
+                
+                // Parse response
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to edit image');
+                }
+                
+                // Display result
+                document.getElementById('editedImage').src = data.screenshot;
+                document.getElementById('result').classList.remove('hidden');
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                // Hide loading indicator
+                document.getElementById('submitBtn').disabled = false;
+                document.getElementById('loading').classList.add('hidden');
+            }
+        }
+        
+        function showError(message) {
+            const errorElement = document.getElementById('error');
+            errorElement.textContent = message;
+            errorElement.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
