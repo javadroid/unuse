@@ -18,7 +18,7 @@ RUN pnpm install --force
 
 EXPOSE 3000
 # Install Playwright dependencies
-RUN pnpm install --force
+RUN pnpm install --force 
 RUN npx playwright install --with-deps
 
 # Set the entrypoint to bfl_image_editor.js
