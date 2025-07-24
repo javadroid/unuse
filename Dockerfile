@@ -1,7 +1,7 @@
 # Stage 1: Build the NestJS app
 FROM node:18-alpine AS build
 
-WORKDIR /app
+WORKDIR /
 
 # Install pnpm
 RUN npm install -g pnpm
