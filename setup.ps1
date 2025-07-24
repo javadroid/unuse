@@ -54,9 +54,6 @@ Write-Host "To run the example client: pnpm run example" -ForegroundColor Yellow
 # Ask if user wants to start the server now
 $startServer = Read-Host "\nDo you want to start the server now? (y/n)"
 
-if ($startServer -eq "y" -or $startServer -eq "Y") {
-    Write-Host "\nStarting server..." -ForegroundColor Cyan
-    pnpm start
-} else {
-    Write-Host "\nSetup complete. You can start the server later with 'pnpm start'." -ForegroundColor Cyan
-}
+
+Write-Host "\nStarting server..." -ForegroundColor Cyan
+pnpm start
