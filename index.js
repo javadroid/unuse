@@ -108,7 +108,7 @@ app.post("/edit-image", async (req, res) => {
 
     // Launch browser
     browser = await chromium.launch({
-      headless: false, // Set to true for production
+     headless: true, // Set to true for production
 
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
