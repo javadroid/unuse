@@ -1,25 +1,12 @@
-# Stage 1: Build the NestJS app
-FROM node:18-alpine AS build
+FROM mcr.microsoft.com/playwright:v1.44.0-jammy
 
 WORKDIR /app
 
-# Install pnpm
-RUN npm install -g pnpm
+COPY package*.json ./
+RUN npm install
 
-COPY --chown=node:node package.json pnpm-lock.yaml ./
-# If you use pnpm-lock.yaml, copy that too for consistent builds
-# COPY pnpm-lock.yaml ./ 
-
-# Copy application files
-COPY --chown=node:node index.js ./
-
-
-RUN pnpm install --force
+COPY . .
 
 EXPOSE 3000
-# Install Playwright dependencies
-RUN pnpm install --force 
-RUN npx playwright install --with-deps
 
-# Set the entrypoint to bfl_image_editor.js
-CMD ["node", "bfl_image_editor.js"]
+CMD ["node", "index.js"]
