@@ -11,7 +11,7 @@ COPY --chown=node:node package.json pnpm-lock.yaml ./
 # COPY pnpm-lock.yaml ./ 
 
 # Copy application files
-COPY --chown=node:node bfl_image_editor.js ./
+COPY --chown=node:node index.js ./
 
 
 RUN pnpm install --force
