@@ -9,6 +9,11 @@ RUN npm install -g pnpm
 COPY --chown=node:node package.json pnpm-lock.yaml ./
 # If you use pnpm-lock.yaml, copy that too for consistent builds
 # COPY pnpm-lock.yaml ./ 
+
+# Copy application files
+COPY --chown=node:node bfl_image_editor.js ./
+
+
 RUN pnpm install --force
 
 EXPOSE 3000
